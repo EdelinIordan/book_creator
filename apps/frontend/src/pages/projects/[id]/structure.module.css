@@ -1,0 +1,177 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2.25rem;
+}
+
+.sidebar {
+  display: grid;
+  gap: 1.5rem;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  height: fit-content;
+  box-shadow: var(--shadow-soft);
+}
+
+.actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.actions button {
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: var(--color-accent-strong);
+  padding: 0.6rem 0.95rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: transform var(--transition-short), box-shadow var(--transition-short);
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+}
+
+.actions button.secondary {
+  background: rgba(148, 163, 184, 0.12);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-secondary);
+}
+
+.actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.llmSelector {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.llmSelector label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--color-text-secondary);
+}
+
+.llmSelector input,
+.llmSelector select {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.status,
+.error {
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.status {
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: var(--color-accent-strong);
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  color: var(--color-danger);
+}
+
+.mainContent {
+  display: grid;
+  gap: 2rem;
+}
+
+.tabs {
+  display: inline-flex;
+  background: rgba(148, 163, 184, 0.12);
+  border-radius: 999px;
+  padding: 0.3rem;
+}
+
+.tabs button {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.activeTab {
+  background: rgba(37, 99, 235, 0.16);
+  color: var(--color-accent-strong) !important;
+}
+
+.structureGrid {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.chapterCard {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.35rem;
+  display: grid;
+  gap: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.chapterCard ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.jsonBlock {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.6rem;
+  font-family: var(--font-family-mono);
+  font-size: 0.9rem;
+  max-height: 420px;
+  overflow: auto;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+.footerLinks a {
+  color: var(--color-accent);
+}
+
+@media (max-width: 960px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+
+  .mainContent {
+    order: 1;
+  }
+}

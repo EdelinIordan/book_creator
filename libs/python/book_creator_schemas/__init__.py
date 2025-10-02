@@ -1,0 +1,53 @@
+"""Shared schemas for the book creator application."""
+
+from .enums import AgentRole, BookStage, CritiqueSeverity, ResearchSourceType
+from .models.book import (
+    BookStructure,
+    Chapter,
+    CreativeGuideline,
+    CreativeGuidelineBatch,
+    DraftVersion,
+    EmotionalLayerBatch,
+    EmotionalLayerEntry,
+    FactMappingBatch,
+    GuidelineFactReference,
+    IdeaBrief,
+    PersonaProfile,
+    ProjectProgressSnapshot,
+    ResearchFact,
+    ResearchFactCandidate,
+    ResearchPrompt,
+    Subchapter,
+    SubchapterFactCoverage,
+    TitleBatch,
+    TitleOption,
+)
+from .models.messages import AgentMessage, CritiqueNote
+
+__all__ = [
+    "AgentRole",
+    "BookStage",
+    "CritiqueSeverity",
+    "ResearchSourceType",
+    "BookStructure",
+    "Chapter",
+    "CreativeGuideline",
+    "CreativeGuidelineBatch",
+    "DraftVersion",
+    "EmotionalLayerBatch",
+    "EmotionalLayerEntry",
+    "GuidelineFactReference",
+    "PersonaProfile",
+    "IdeaBrief",
+    "FactMappingBatch",
+    "ProjectProgressSnapshot",
+    "ResearchFactCandidate",
+    "ResearchFact",
+    "ResearchPrompt",
+    "Subchapter",
+    "SubchapterFactCoverage",
+    "TitleBatch",
+    "TitleOption",
+    "AgentMessage",
+    "CritiqueNote",
+]

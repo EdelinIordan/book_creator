@@ -1,0 +1,211 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2.25rem;
+}
+
+.sidebar {
+  display: grid;
+  gap: 1.5rem;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  height: fit-content;
+  box-shadow: var(--shadow-soft);
+}
+
+.guidelinesForm {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.guidelinesForm textarea {
+  width: 100%;
+  min-height: 140px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem;
+  color: var(--color-text-secondary);
+  resize: vertical;
+}
+
+.guidelinesForm button {
+  justify-self: flex-start;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-secondary) 100%);
+  color: var(--color-accent-on);
+  font-weight: 600;
+  box-shadow: 0 14px 32px rgba(37, 99, 235, 0.24);
+}
+
+.links {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.links a {
+  color: var(--color-accent);
+}
+
+.mainContent {
+  display: grid;
+  gap: 2rem;
+}
+
+.promptGrid {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.card header {
+  display: grid;
+  gap: 0.4rem;
+  align-items: start;
+}
+
+.copyButton {
+  justify-self: flex-start;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-subtle);
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: transform var(--transition-short), box-shadow var(--transition-short);
+}
+
+.copyButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
+}
+
+.copyButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.promptBody {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.meta {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.uploadSection {
+  display: grid;
+  gap: 1rem;
+}
+
+.uploadSection ul {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+}
+
+.uploadSection li {
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1rem;
+  display: grid;
+  gap: 0.25rem;
+  color: var(--color-text-secondary);
+}
+
+.uploadForm {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.uploadForm input,
+.uploadForm textarea {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.uploadForm button {
+  justify-self: flex-start;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: rgba(13, 148, 136, 0.18);
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+.critiqueBox,
+.nextStageNotice {
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  border-radius: var(--radius-xl);
+  padding: 1.6rem;
+  display: grid;
+  gap: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.status,
+.error {
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.status {
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: var(--color-accent-strong);
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  color: var(--color-danger);
+}
+
+textarea:disabled,
+input:disabled,
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 960px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+
+  .mainContent {
+    order: 1;
+  }
+}

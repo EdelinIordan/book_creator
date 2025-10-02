@@ -1,0 +1,175 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2.25rem;
+}
+
+.infoPane {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.6rem;
+  display: grid;
+  gap: 1.5rem;
+  height: fit-content;
+  box-shadow: var(--shadow-soft);
+}
+
+.actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.actions button {
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--color-accent-strong);
+  font-weight: 600;
+  transition: transform var(--transition-short), box-shadow var(--transition-short);
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+}
+
+.actions button.primary {
+  background: rgba(13, 148, 136, 0.18);
+  border-color: rgba(13, 148, 136, 0.3);
+  color: var(--color-secondary);
+}
+
+.actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.selectedBox,
+.shortlistBox {
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.editorBox {
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.24);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.editorBox label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--color-text-secondary);
+}
+
+.editorBox input {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.editorBox input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.helperText {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.grid {
+  display: grid;
+  gap: 1.6rem;
+}
+
+.card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.cardActions button {
+  border: 1px solid var(--color-border-subtle);
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--color-text-secondary);
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.cardActions button.shortlisted {
+  border-color: rgba(13, 148, 136, 0.3);
+  background: rgba(13, 148, 136, 0.18);
+  color: var(--color-secondary);
+}
+
+.cardActions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  color: var(--color-text-muted);
+}
+
+.footerLinks a {
+  color: var(--color-accent);
+}
+
+.status,
+.error {
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.status {
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: var(--color-accent-strong);
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  color: var(--color-danger);
+}
+
+.critiqueBox {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 960px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+}

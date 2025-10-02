@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: book-creator-schemas
+Version: 0.1.0
+Summary: Shared Pydantic models and utilities for the book creator platform
+Author: Book Creator Team
+Requires-Python: >=3.11
+Requires-Dist: pydantic<3,>=2.8
+Requires-Dist: pydantic[email]<3,>=2.8
+Requires-Dist: httpx<0.28,>=0.27
+Requires-Dist: prometheus-client<0.21,>=0.20
+Provides-Extra: providers
+Requires-Dist: openai<2,>=1.51.0; extra == "providers"
+Requires-Dist: google-genai<2,>=1.1.0; extra == "providers"

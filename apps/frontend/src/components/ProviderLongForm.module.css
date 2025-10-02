@@ -1,0 +1,150 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 2.25rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-soft);
+  color: var(--color-text-secondary);
+}
+
+.form header {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form header h1 {
+  margin: 0;
+  font-size: 1.65rem;
+  color: var(--color-text-primary);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem 1.25rem;
+}
+
+.table {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  align-items: end;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  background: rgba(148, 163, 184, 0.08);
+  transition: border-color var(--transition-short), box-shadow var(--transition-short);
+}
+
+.tableRow:hover {
+  border-color: rgba(37, 99, 235, 0.28);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.tableRow label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.form input,
+.form select {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.sectionHeader button,
+.tableRow button {
+  background: rgba(37, 99, 235, 0.14);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: var(--color-accent-strong);
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: transform var(--transition-short), box-shadow var(--transition-short),
+    background-color var(--transition-short);
+}
+
+.sectionHeader button:hover,
+.tableRow button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.16);
+}
+
+.sectionHeader button {
+  align-self: flex-start;
+}
+
+.emptyState {
+  padding: 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--color-text-muted);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer button[type="submit"] {
+  padding: 0.75rem 1.55rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-secondary) 100%);
+  color: var(--color-accent-on);
+  font-weight: 700;
+  box-shadow: 0 18px 40px rgba(37, 99, 235, 0.24);
+  transition: transform var(--transition-short), box-shadow var(--transition-short);
+}
+
+.footer button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 48px rgba(37, 99, 235, 0.28);
+}
+
+@media (max-width: 720px) {
+  .form {
+    padding: 1.75rem;
+  }
+
+  .tableRow {
+    grid-template-columns: 1fr;
+  }
+}

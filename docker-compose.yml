@@ -1,0 +1,191 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: infra/Dockerfiles/frontend.Dockerfile
+    command: npm run dev
+    ports:
+      - "3100:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+      - API_INTERNAL_BASE_URL=http://api:8000
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    networks:
+      - booknet
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/Dockerfiles/api.Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://book_creator:book_creator@postgres:5432/book_creator
+      - REDIS_URL=redis://redis:6379/0
+      - BOOK_CREATOR_CAPTURE_WARNINGS=1
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - booknet
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: infra/Dockerfiles/orchestrator.Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 9100
+    ports:
+      - "9100:9100"
+    env_file:
+      - .env
+    environment:
+      - BOOK_CREATOR_CAPTURE_WARNINGS=1
+    volumes:
+      - ./services/orchestrator:/workspace/orchestrator
+      - ./libs/python:/workspace/libs/python
+    depends_on:
+      - api
+      - redis
+    networks:
+      - booknet
+
+  agent_workers:
+    build:
+      context: .
+      dockerfile: infra/Dockerfiles/agent-workers.Dockerfile
+    command: python app/worker.py
+    env_file:
+      - .env
+    environment:
+      - BOOK_CREATOR_CAPTURE_WARNINGS=1
+    volumes:
+      - ./services/agent-workers:/app
+    depends_on:
+      - orchestrator
+    networks:
+      - booknet
+
+  doc_parser:
+    build:
+      context: .
+      dockerfile: infra/Dockerfiles/doc-parser.Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 9200
+    ports:
+      - "9300:9200"
+    env_file:
+      - .env
+    environment:
+      - BOOK_CREATOR_CAPTURE_WARNINGS=1
+    volumes:
+      - ./services/doc-parser:/app
+    networks:
+      - booknet
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=book_creator
+      - POSTGRES_PASSWORD=book_creator
+      - POSTGRES_DB=book_creator
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U book_creator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./data/seeds/postgres:/docker-entrypoint-initdb.d
+    networks:
+      - booknet
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - booknet
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - booknet
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - booknet
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - ./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+      - orchestrator
+      - doc_parser
+      - agent_workers
+    networks:
+      - booknet
+
+  grafana:
+    image: grafana/grafana:10.4.1
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3110:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    networks:
+      - booknet
+
+networks:
+  booknet:
+    driver: bridge
+
+volumes:
+  pg_data:
+  qdrant_data:
+  minio_data:
+  grafana_data:

@@ -1,0 +1,135 @@
+.wrapper {
+  display: grid;
+  gap: 2rem;
+  max-width: 720px;
+}
+
+.header {
+  display: grid;
+  gap: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.form {
+  display: grid;
+  gap: 1.5rem;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.field input,
+.field select,
+.field textarea {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  transition: border-color var(--transition-short), box-shadow var(--transition-short);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.28);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 160px;
+}
+
+.optional {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-left: 0.35rem;
+}
+
+.wordCount,
+.wordCountExceeded {
+  font-size: 0.85rem;
+  justify-self: flex-end;
+}
+
+.wordCount {
+  color: var(--color-text-muted);
+}
+
+.wordCountExceeded {
+  color: var(--color-danger);
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+}
+
+.errorBanner,
+.statusBanner {
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1.1rem;
+  font-weight: 600;
+}
+
+.errorBanner {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  color: var(--color-danger);
+}
+
+.statusBanner {
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: var(--color-accent-strong);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.actions button,
+.secondaryButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  border: none;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-secondary) 100%);
+  color: var(--color-accent-on);
+  box-shadow: 0 14px 32px rgba(37, 99, 235, 0.24);
+  transition: transform var(--transition-short), box-shadow var(--transition-short);
+}
+
+.actions button:hover,
+.secondaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.28);
+}
+
+.actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.secondaryButton {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: none;
+}
