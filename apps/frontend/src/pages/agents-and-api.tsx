@@ -62,6 +62,15 @@ const NAV_TABS: Array<{ id: "providers" | "catalog" | "roster"; label: string; b
   },
 ];
 
+type PromptModalState = {
+  agentId: string;
+  agentName: string;
+  systemDraft: string;
+  userDraft: string;
+  systemOriginal: string;
+  userOriginal: string;
+};
+
 export default function AgentsAndApiPage() {
   const [providerStore, setProviderStore] = useState<ProviderSettingsStore | null>(null);
   const [agentSettings, setAgentSettings] = useState<AgentSettingsMap>({});
@@ -72,6 +81,7 @@ export default function AgentsAndApiPage() {
   const [modelDrafts, setModelDrafts] = useState<Record<string, { label: string; description: string }>>({});
   const [modelEditing, setModelEditing] = useState<Record<string, string | null>>({});
   const [activeTab, setActiveTab] = useState<"providers" | "catalog" | "roster">("providers");
+  const [promptModal, setPromptModal] = useState<PromptModalState | null>(null);
 
   useEffect(() => {
     setProviderStore(loadProviderStore());
@@ -84,6 +94,22 @@ export default function AgentsAndApiPage() {
       .then((metrics) => setStageMetrics(metrics))
       .catch((error) => console.warn("Failed to load agent metrics", error));
   }, []);
+
+  useEffect(() => {
+    if (!promptModal) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setPromptModal(null);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [promptModal]);
 
   useEffect(() => {
     if (!providerStore) return;
@@ -552,21 +578,6 @@ export default function AgentsAndApiPage() {
     setStatusMessage("All agent configurations reset to defaults.");
   };
 
-  const handleResetAgentPrompts = (agentId: string) => {
-    setAgentSettings((prev) => {
-      const next: AgentSettingsMap = { ...prev };
-      const defaults = buildAgentDefaults(agentId);
-      const existing = next[agentId] ?? defaults;
-      next[agentId] = {
-        ...existing,
-        systemPrompt: defaults.systemPrompt,
-        userPrompt: defaults.userPrompt,
-      };
-      return next;
-    });
-    setStatusMessage("Prompts restored to defaults for this agent.");
-  };
-
   const getAgentConfig = (agentId: string): AgentRuntimeConfig => {
     const stored = agentSettings[agentId];
     const defaults = buildAgentDefaults(agentId);
@@ -580,6 +591,62 @@ export default function AgentsAndApiPage() {
       userPrompt: stored.userPrompt ?? defaults.userPrompt,
     };
   };
+
+  const handleOpenPromptModal = (agentId: string) => {
+    const config = getAgentConfig(agentId);
+    const rosterEntry = rosterById.get(agentId);
+    setPromptModal({
+      agentId,
+      agentName: rosterEntry?.name ?? agentId,
+      systemDraft: config.systemPrompt ?? "",
+      userDraft: config.userPrompt ?? "",
+      systemOriginal: config.systemPrompt ?? "",
+      userOriginal: config.userPrompt ?? "",
+    });
+  };
+
+  const handleClosePromptModal = () => {
+    setPromptModal(null);
+  };
+
+  const handlePromptDraftChange = (field: "systemDraft" | "userDraft", value: string) => {
+    setPromptModal((prev) => (prev ? { ...prev, [field]: value } : prev));
+  };
+
+  const handleRestorePromptDefaults = () => {
+    setPromptModal((prev) => {
+      if (!prev) return prev;
+      const defaults = buildAgentDefaults(prev.agentId);
+      return {
+        ...prev,
+        systemDraft: defaults.systemPrompt ?? "",
+        userDraft: defaults.userPrompt ?? "",
+      };
+    });
+  };
+
+  const handleSavePrompts = () => {
+    if (!promptModal) return;
+    const { agentId, agentName, systemDraft, userDraft } = promptModal;
+    setAgentSettings((prev) => {
+      const next: AgentSettingsMap = { ...prev };
+      const existing = next[agentId] ?? buildAgentDefaults(agentId);
+      next[agentId] = {
+        ...existing,
+        systemPrompt: systemDraft,
+        userPrompt: userDraft,
+      };
+      return next;
+    });
+    setStatusMessage(`Prompts updated for ${agentName}.`);
+    setPromptModal(null);
+  };
+
+  const promptModalHasChanges = Boolean(
+    promptModal &&
+      (promptModal.systemDraft !== promptModal.systemOriginal ||
+        promptModal.userDraft !== promptModal.userOriginal)
+  );
 
   const providerOptions = (providerStore?.providers ?? [])
     .filter((provider) => provider.type !== "mock")
@@ -1079,40 +1146,15 @@ export default function AgentsAndApiPage() {
                         )}
                       </details>
 
-                      <details className={styles.detailsBlock} open>
-                        <summary>Prompts</summary>
-                        <div className={styles.promptEditor}>
-                          <label className={styles.field}>
-                            <span>System prompt</span>
-                            <textarea
-                              rows={4}
-                              className={styles.textArea}
-                              value={config.systemPrompt ?? ""}
-                              onChange={(event) =>
-                                handleAgentConfigChange(agent.id, "systemPrompt", event.target.value)
-                              }
-                            />
-                          </label>
-                          <label className={styles.field}>
-                            <span>User prompt</span>
-                            <textarea
-                              rows={6}
-                              className={styles.textArea}
-                              value={config.userPrompt ?? ""}
-                              onChange={(event) =>
-                                handleAgentConfigChange(agent.id, "userPrompt", event.target.value)
-                              }
-                            />
-                          </label>
-                          <button
-                            type="button"
-                            className={styles.linkButton}
-                            onClick={() => handleResetAgentPrompts(agent.id)}
-                          >
-                            Reset prompts
-                          </button>
-                        </div>
-                      </details>
+                      <div className={styles.agentActions}>
+                        <button
+                          type="button"
+                          className={styles.secondaryButton}
+                          onClick={() => handleOpenPromptModal(agent.id)}
+                        >
+                          Edit prompts
+                        </button>
+                      </div>
                     </div>
                   </article>
                 );
@@ -1184,6 +1226,80 @@ export default function AgentsAndApiPage() {
 
         {renderActivePanel()}
       </div>
+      {promptModal && (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              handleClosePromptModal();
+            }
+          }}
+        >
+          <div
+            className={`${styles.modal} ${styles.promptModal}`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="prompt-editor-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className={styles.modalHeader}>
+              <h2 id="prompt-editor-title">{promptModal.agentName} prompts</h2>
+              <button
+                type="button"
+                className={styles.modalClose}
+                onClick={handleClosePromptModal}
+                aria-label="Close prompt editor"
+              >
+                ×
+              </button>
+            </header>
+            <div className={styles.modalBody}>
+              <p className={styles.modalHelper}>
+                Adjust the system and user prompts for this agent. Changes are saved locally and applied on the next run.
+              </p>
+              <div className={styles.modalGrid}>
+                <label>
+                  <span>System prompt</span>
+                  <textarea
+                    className={styles.textArea}
+                    rows={6}
+                    value={promptModal.systemDraft}
+                    onChange={(event) => handlePromptDraftChange("systemDraft", event.target.value)}
+                  />
+                </label>
+                <label>
+                  <span>User prompt</span>
+                  <textarea
+                    className={styles.textArea}
+                    rows={8}
+                    value={promptModal.userDraft}
+                    onChange={(event) => handlePromptDraftChange("userDraft", event.target.value)}
+                  />
+                </label>
+              </div>
+            </div>
+            <footer className={styles.modalFooter}>
+              <button type="button" className={styles.linkButton} onClick={handleRestorePromptDefaults}>
+                Restore defaults
+              </button>
+              <div className={styles.modalButtons}>
+                <button type="button" className={styles.ghostButton} onClick={handleClosePromptModal}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={handleSavePrompts}
+                  disabled={!promptModalHasChanges}
+                >
+                  Save prompts
+                </button>
+              </div>
+            </footer>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }

@@ -1,0 +1,12 @@
+# dependencies / build
+node_modules/
+.next/
+dist/
+build/
+
+# Python venv & caches
+.venv/
+__pycache__/
+
+# OS/editor noise
+.DS_Store

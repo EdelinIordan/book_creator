@@ -137,6 +137,13 @@
   box-shadow: 0 18px 48px rgba(37, 99, 235, 0.26);
 }
 
+.primaryButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
 .secondaryButton {
   padding: 0.75rem 1.6rem;
   border: 1px solid rgba(37, 99, 235, 0.28);
@@ -574,6 +581,20 @@
   display: grid;
   gap: 1.5rem;
   padding: 1.9rem;
+  grid-template-rows: auto 1fr auto;
+  color: var(--color-text-primary);
+  position: relative;
+  z-index: 1;
+}
+
+.promptModal {
+  width: min(760px, 100%);
+  max-height: calc(90vh - 2rem);
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.96));
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.28);
+  border: 2px solid #2563eb;
+  position: relative;
 }
 
 .modalHeader {
@@ -599,6 +620,8 @@
 .modalBody {
   display: grid;
   gap: 1rem;
+  overflow-y: auto;
+  padding-right: 0.2rem;
 }
 
 .modalGrid {
@@ -655,6 +678,14 @@
   flex-wrap: wrap;
 }
 
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .stageBlock {
   display: grid;
   gap: 1.25rem;
@@ -695,7 +726,7 @@
 .agentGrid {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
 }
 
 .agentCard {
@@ -847,6 +878,11 @@
 .promptEditor {
   display: grid;
   gap: 1rem;
+}
+
+.agentActions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .textArea {
