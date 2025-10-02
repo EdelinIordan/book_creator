@@ -55,6 +55,7 @@ Initial render assumes light mode to avoid hydration flashes, then immediately s
 - **Status banners**: use translucent backgrounds with matching border hues. Examples live in `index.module.css` (`.status`, `.error`).
 - **Data edits**: budgeting and provider forms employ grid layouts, `var(--radius-sm)` inputs, and inline helper text—follow that structure to keep validation messaging predictable.
 - **Tables**: apply `tableWrapper` for scrollable containers, `th` uppercase labels, and `td` with generous padding. Keep destructive actions as `dangerButton` variants.
+- **Overlays & modals**: use the shared `<Modal />` component for confirmations and editors. It renders via portal, locks body scroll, and wires `Escape`/outside-click dismissal. Pass `size="lg"` plus a custom container class (e.g., `promptModalContainer`) when you need the gradient prompt editor style; smaller confirmations can rely on the default surface. Provide `footer` content instead of hard-coding buttons in bodies so alignment stays consistent.
 
 ## Dark/Light Toggle Placement
 - Desktop: top-right of the sidebar (`.themeToggleDesktop`).

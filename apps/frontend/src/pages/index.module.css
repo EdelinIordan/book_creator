@@ -364,40 +364,12 @@
   box-shadow: 0 16px 36px rgba(13, 148, 136, 0.25);
 }
 
-.modalBackdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  display: grid;
-  place-items: center;
-  padding: 1.5rem;
-  z-index: 1000;
-  backdrop-filter: blur(6px);
-}
-
-.modal {
-  width: min(420px, 90vw);
+.deleteModalBody {
   display: grid;
   gap: 1rem;
-  padding: 2rem;
-  border-radius: var(--radius-xl);
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-subtle);
-  box-shadow: var(--shadow-elevated);
 }
 
-.modal h2 {
-  margin: 0;
-  font-size: 1.35rem;
-  color: var(--color-text-primary);
-}
-
-.modal p {
-  margin: 0;
-  color: var(--color-text-secondary);
-}
-
-.modalError {
+.deleteModalError {
   margin: 0;
   padding: 0.65rem 0.75rem;
   border-radius: var(--radius-sm);
@@ -407,7 +379,11 @@
   font-size: 0.9rem;
 }
 
-.modalActions {
+.deleteModalFooter {
+  width: 100%;
+}
+
+.deleteModalActions {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;

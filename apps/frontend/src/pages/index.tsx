@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { AppLayout } from "../layout/AppLayout";
 import { deleteProject, fetchProjects, ProjectSummary, updateProjectBudget } from "../lib/api";
+import { Modal } from "../components/Modal";
 import styles from "./index.module.css";
 
 export default function Dashboard() {
@@ -317,29 +318,15 @@ export default function Dashboard() {
           })}
       </section>
       {pendingDelete && (
-        <div
-          className={styles.modalBackdrop}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-modal-title"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
-              closeDeleteModal();
-            }
-          }}
-        >
-          <div className={styles.modal}>
-            <h2 id="delete-modal-title">Are you sure?</h2>
-            <p>
-              Delete <strong>{pendingDelete.title ?? "Untitled Project"}</strong> and all of its in-progress
-              work.
-            </p>
-            {deleteError && (
-              <p className={styles.modalError} role="alert">
-                {deleteError}
-              </p>
-            )}
-            <div className={styles.modalActions}>
+        <Modal
+          isOpen={Boolean(pendingDelete)}
+          onClose={closeDeleteModal}
+          title="Delete project?"
+          bodyClassName={styles.deleteModalBody}
+          footerClassName={styles.deleteModalFooter}
+          closeLabel="Close delete confirmation"
+          footer={
+            <div className={styles.deleteModalActions}>
               <button type="button" className={styles.secondaryButton} onClick={closeDeleteModal} disabled={deleteLoading}>
                 Cancel
               </button>
@@ -347,8 +334,17 @@ export default function Dashboard() {
                 {deleteLoading ? "Deleting…" : "Delete project"}
               </button>
             </div>
-          </div>
-        </div>
+          }
+        >
+          <p>
+            Delete <strong>{pendingDelete.title ?? "Untitled Project"}</strong> and all of its in-progress work.
+          </p>
+          {deleteError && (
+            <p className={styles.deleteModalError} role="alert">
+              {deleteError}
+            </p>
+          )}
+        </Modal>
       )}
     </AppLayout>
   );
