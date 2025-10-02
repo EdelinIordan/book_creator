@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AppLayout } from "../layout/AppLayout";
 import {
@@ -25,6 +25,7 @@ import {
   fetchAgentStageMetrics,
 } from "../lib/api";
 import styles from "./agents-and-api.module.css";
+import { createPortal } from "react-dom";
 
 const PROVIDER_TYPE_OPTIONS: Array<{ value: ProviderType; label: string }> = [
   { value: "openai", label: "OpenAI" },
@@ -82,11 +83,17 @@ export default function AgentsAndApiPage() {
   const [modelEditing, setModelEditing] = useState<Record<string, string | null>>({});
   const [activeTab, setActiveTab] = useState<"providers" | "catalog" | "roster">("providers");
   const [promptModal, setPromptModal] = useState<PromptModalState | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const promptSystemRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     setProviderStore(loadProviderStore());
     setAgentSettings(loadAgentSettings());
     setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    setIsClient(true);
   }, []);
 
   useEffect(() => {
@@ -109,6 +116,12 @@ export default function AgentsAndApiPage() {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
+  }, [promptModal]);
+
+  useEffect(() => {
+    if (promptModal && promptSystemRef.current) {
+      promptSystemRef.current.focus({ preventScroll: true });
+    }
   }, [promptModal]);
 
   useEffect(() => {
@@ -1226,80 +1239,85 @@ export default function AgentsAndApiPage() {
 
         {renderActivePanel()}
       </div>
-      {promptModal && (
-        <div
-          className={styles.modalOverlay}
-          role="presentation"
-          onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              handleClosePromptModal();
-            }
-          }}
-        >
+      {isClient &&
+        promptModal &&
+        createPortal(
           <div
-            className={`${styles.modal} ${styles.promptModal}`}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="prompt-editor-title"
-            onClick={(event) => event.stopPropagation()}
+            className={styles.modalOverlay}
+            role="presentation"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                handleClosePromptModal();
+              }
+            }}
           >
-            <header className={styles.modalHeader}>
-              <h2 id="prompt-editor-title">{promptModal.agentName} prompts</h2>
-              <button
-                type="button"
-                className={styles.modalClose}
-                onClick={handleClosePromptModal}
-                aria-label="Close prompt editor"
-              >
-                ×
-              </button>
-            </header>
-            <div className={styles.modalBody}>
-              <p className={styles.modalHelper}>
-                Adjust the system and user prompts for this agent. Changes are saved locally and applied on the next run.
-              </p>
-              <div className={styles.modalGrid}>
-                <label>
-                  <span>System prompt</span>
-                  <textarea
-                    className={styles.textArea}
-                    rows={6}
-                    value={promptModal.systemDraft}
-                    onChange={(event) => handlePromptDraftChange("systemDraft", event.target.value)}
-                  />
-                </label>
-                <label>
-                  <span>User prompt</span>
-                  <textarea
-                    className={styles.textArea}
-                    rows={8}
-                    value={promptModal.userDraft}
-                    onChange={(event) => handlePromptDraftChange("userDraft", event.target.value)}
-                  />
-                </label>
-              </div>
-            </div>
-            <footer className={styles.modalFooter}>
-              <button type="button" className={styles.linkButton} onClick={handleRestorePromptDefaults}>
-                Restore defaults
-              </button>
-              <div className={styles.modalButtons}>
-                <button type="button" className={styles.ghostButton} onClick={handleClosePromptModal}>
-                  Cancel
-                </button>
+            <div
+              className={`${styles.modal} ${styles.promptModal}`}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="prompt-editor-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <header className={styles.modalHeader}>
+                <h2 id="prompt-editor-title">{promptModal.agentName} prompts</h2>
                 <button
                   type="button"
-                  className={styles.primaryButton}
-                  onClick={handleSavePrompts}
-                  disabled={!promptModalHasChanges}
+                  className={styles.modalClose}
+                  onClick={handleClosePromptModal}
+                  aria-label="Close prompt editor"
                 >
-                  Save prompts
+                  ×
                 </button>
+              </header>
+              <div className={styles.modalBody}>
+                <p className={styles.modalHelper}>
+                  Adjust the system and user prompts for this agent. Changes are saved locally and applied on the next
+                  run.
+                </p>
+                <div className={styles.modalGrid}>
+                  <label>
+                    <span>System prompt</span>
+                    <textarea
+                      ref={promptSystemRef}
+                      className={styles.textArea}
+                      rows={6}
+                      value={promptModal.systemDraft}
+                      onChange={(event) => handlePromptDraftChange("systemDraft", event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>User prompt</span>
+                    <textarea
+                      className={styles.textArea}
+                      rows={8}
+                      value={promptModal.userDraft}
+                      onChange={(event) => handlePromptDraftChange("userDraft", event.target.value)}
+                    />
+                  </label>
+                </div>
               </div>
-            </footer>
-          </div>
-        </div>
-      )}
+              <footer className={styles.modalFooter}>
+                <button type="button" className={styles.linkButton} onClick={handleRestorePromptDefaults}>
+                  Restore defaults
+                </button>
+                <div className={styles.modalButtons}>
+                  <button type="button" className={styles.ghostButton} onClick={handleClosePromptModal}>
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.primaryButton}
+                    onClick={handleSavePrompts}
+                    disabled={!promptModalHasChanges}
+                  >
+                    Save prompts
+                  </button>
+                </div>
+              </footer>
+            </div>
+          </div>,
+          document.body
+        )}
     </AppLayout>
   );
 }
