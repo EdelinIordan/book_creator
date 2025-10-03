@@ -45,6 +45,27 @@ const STAGE_LABEL: Record<BookStage, string> = {
   COMPLETE: "Ready to Publish",
 };
 
+// Lightweight format checks to catch obvious copy/paste mistakes without hitting provider APIs.
+const PROVIDER_KEY_PATTERNS: Partial<Record<ProviderType, RegExp>> = {
+  openai: /^sk-[a-zA-Z0-9_-]{16,}$/,
+  gemini: /^AIza[0-9A-Za-z_\-]{35}$/,
+};
+
+const PROVIDER_TEST_HINT: Partial<Record<ProviderType, string>> = {
+  openai: "OpenAI keys should start with 'sk-' followed by letters and numbers.",
+  gemini: "Gemini API keys start with 'AIza' and are 39 characters long.",
+};
+
+const getApiKeyPlaceholder = (type: ProviderType) => {
+  switch (type) {
+    case "gemini":
+      return "AIza...";
+    case "openai":
+    default:
+      return "sk-...";
+  }
+};
+
 const NAV_TABS: Array<{ id: "providers" | "catalog" | "roster"; label: string; blurb: string }> = [
   {
     id: "providers",
@@ -286,9 +307,15 @@ export default function AgentsAndApiPage() {
     }
   };
 
-  const handleProviderSave = () => {
-    if (providerStore) {
-      saveProviderStore(providerStore);
+  const handleProviderSave = (providerId?: string) => {
+    if (!providerStore) return;
+    saveProviderStore(providerStore);
+    if (providerId) {
+      const provider = providerStore.providers.find((entry) => entry.id === providerId);
+      setStatusMessage(
+        provider ? `${provider.label} settings saved locally.` : "Provider settings saved locally."
+      );
+    } else {
       setStatusMessage("Provider settings saved locally.");
     }
   };
@@ -297,10 +324,20 @@ export default function AgentsAndApiPage() {
     if (!providerStore) return;
     const provider = providerStore.providers.find((entry) => entry.id === providerId);
     if (!provider) return;
+    const trimmedKey = provider.apiKey.trim();
+    const pattern = PROVIDER_KEY_PATTERNS[provider.type];
+
+    if (provider.type !== "mock" && pattern && !pattern.test(trimmedKey)) {
+      setConnectionStatus((prev) => ({ ...prev, [providerId]: "error" }));
+      const hint = PROVIDER_TEST_HINT[provider.type];
+      setStatusMessage(hint ?? "The API key format looks invalid for this provider.");
+      return;
+    }
+
     setConnectionStatus((prev) => ({ ...prev, [providerId]: "testing" }));
     await new Promise((resolve) => setTimeout(resolve, 700));
-    const ok = provider.type === "mock" || provider.apiKey.trim().length >= 8;
-    setConnectionStatus((prev) => ({ ...prev, [providerId]: ok ? "success" : "error" }));
+    setConnectionStatus((prev) => ({ ...prev, [providerId]: "success" }));
+    setStatusMessage(`${provider.label} connection looks good.`);
   };
 
   const handleModelDraftChange = (
@@ -652,7 +689,11 @@ export default function AgentsAndApiPage() {
           </p>
         </div>
         <div className={styles.sectionActions}>
-          <button type="button" className={styles.secondaryButton} onClick={handleProviderSave}>
+          <button
+            type="button"
+            className={styles.secondaryButton}
+            onClick={() => handleProviderSave()}
+          >
             Save provider settings
           </button>
         </div>
@@ -698,7 +739,7 @@ export default function AgentsAndApiPage() {
                         onChange={(event) =>
                           handleProviderEntryChange(provider.id, "apiKey", event.target.value)
                         }
-                        placeholder="sk-..."
+                        placeholder={getApiKeyPlaceholder(provider.type)}
                       />
                     </td>
                     <td className={styles.connectionCell}>
@@ -715,14 +756,24 @@ export default function AgentsAndApiPage() {
                       >
                         {statusLabel}
                       </span>
-                      <button
-                        type="button"
-                        className={styles.linkButton}
-                        onClick={() => handleTestProviderConnection(provider.id)}
-                        disabled={status === "testing"}
-                      >
-                        {status === "testing" ? "Testing…" : "Test"}
-                      </button>
+                      <div className={styles.connectionActions}>
+                        <button
+                          type="button"
+                          className={`${styles.secondaryButton} ${styles.smallButton}`}
+                          onClick={() => handleProviderSave(provider.id)}
+                          disabled={status === "testing"}
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.ghostButton} ${styles.smallButton}`}
+                          onClick={() => handleTestProviderConnection(provider.id)}
+                          disabled={status === "testing"}
+                        >
+                          {status === "testing" ? "Testing…" : "Test"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

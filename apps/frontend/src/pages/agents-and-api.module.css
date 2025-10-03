@@ -334,6 +334,13 @@
   flex-wrap: wrap;
 }
 
+.connectionActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .connectionBadge {
   display: inline-flex;
   align-items: center;
