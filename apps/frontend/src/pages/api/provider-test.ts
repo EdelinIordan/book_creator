@@ -41,7 +41,7 @@ async function testOpenAI(apiKey: string): Promise<TestResponse> {
     if (!response.ok) {
       const body = await response.json().catch(() => ({}));
       const message =
-        (body as { error?: { message?: string } }).error?.message ??
+        (body as { error?: { message?: string; code?: string } }).error?.message ??
         `OpenAI responded with status ${response.status}.`;
       return { ok: false, message };
     }
@@ -68,7 +68,7 @@ async function testGemini(apiKey: string): Promise<TestResponse> {
     if (!response.ok) {
       const body = await response.json().catch(() => ({}));
       const message =
-        ((body as { error?: { message?: string } }).error?.message ??
+        ((body as { error?: { message?: string; status?: { code?: string } } }).error?.message ??
           `Gemini responded with status ${response.status}.`);
       return { ok: false, message };
     }
