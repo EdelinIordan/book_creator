@@ -331,14 +331,15 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
 }
 
 .connectionActions {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .connectionBadge {
@@ -350,6 +351,22 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.connectionActions button {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .connectionCell {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .connectionActions {
+    flex-wrap: wrap;
+  }
 }
 
 .connectionBadgeIdle {

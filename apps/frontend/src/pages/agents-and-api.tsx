@@ -334,10 +334,50 @@ export default function AgentsAndApiPage() {
       return;
     }
 
+    if (provider.type === "mock") {
+      setConnectionStatus((prev) => ({ ...prev, [providerId]: "success" }));
+      setStatusMessage("Mock provider is always ready.");
+      return;
+    }
+
+    if (!trimmedKey) {
+      setConnectionStatus((prev) => ({ ...prev, [providerId]: "error" }));
+      setStatusMessage(`Add an API key for ${provider.label} before testing.`);
+      return;
+    }
+
     setConnectionStatus((prev) => ({ ...prev, [providerId]: "testing" }));
-    await new Promise((resolve) => setTimeout(resolve, 700));
-    setConnectionStatus((prev) => ({ ...prev, [providerId]: "success" }));
-    setStatusMessage(`${provider.label} connection looks good.`);
+
+    try {
+      const response = await fetch("/api/provider-test", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          providerType: provider.type,
+          apiKey: trimmedKey,
+        }),
+      });
+
+      const result = (await response.json()) as { ok?: boolean; message?: string; error?: string };
+
+      if (!response.ok || !result.ok) {
+        setConnectionStatus((prev) => ({ ...prev, [providerId]: "error" }));
+        setStatusMessage(result.message ?? result.error ?? `Could not verify ${provider.label}.`);
+        return;
+      }
+
+      setConnectionStatus((prev) => ({ ...prev, [providerId]: "success" }));
+      setStatusMessage(result.message ?? `${provider.label} connection looks good.`);
+    } catch (error) {
+      setConnectionStatus((prev) => ({ ...prev, [providerId]: "error" }));
+      const message =
+        error instanceof Error
+          ? error.message
+          : `Unexpected error while testing ${provider.label}.`;
+      setStatusMessage(message);
+    }
   };
 
   const handleModelDraftChange = (
